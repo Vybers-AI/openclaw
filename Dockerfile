@@ -59,8 +59,7 @@ RUN chmod +x scripts/docker-entrypoint.sh
 # This reduces the attack surface by preventing container escape via root privileges
 USER node
 
-# The entrypoint seeds a minimal config (e.g. origin fallback for cloud deploys)
-# then exec's the CMD. Override CMD for custom gateway flags:
-#   docker run <image> node openclaw.mjs gateway --allow-unconfigured --bind lan
-ENTRYPOINT ["./scripts/docker-entrypoint.sh"]
-CMD ["node", "openclaw.mjs", "gateway", "--allow-unconfigured"]
+# Default: run the entrypoint script which seeds config and starts the gateway.
+# The entrypoint reads OPENCLAW_BIND and PORT env vars for bind/port config.
+# docker-compose users override CMD with their own command.
+CMD ["./scripts/docker-entrypoint.sh"]
