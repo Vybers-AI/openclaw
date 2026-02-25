@@ -31,4 +31,10 @@ elif ! grep -q '"dangerouslyAllowHostHeaderOriginFallback"' "$CONFIG_FILE"; then
   " "$CONFIG_FILE"
 fi
 
-exec "$@"
+echo "[entrypoint] config: $CONFIG_FILE"
+echo "[entrypoint] starting gateway on ${OPENCLAW_BIND:-loopback}:${PORT:-18789}"
+
+exec node openclaw.mjs gateway \
+  --allow-unconfigured \
+  --bind "${OPENCLAW_BIND:-loopback}" \
+  --port "${PORT:-18789}"

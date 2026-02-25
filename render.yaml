@@ -4,8 +4,10 @@ services:
     runtime: docker
     plan: starter
     healthCheckPath: /health
-    dockerCommand: node openclaw.mjs gateway --allow-unconfigured --bind lan --port 8080
+    dockerCommand: ./scripts/docker-entrypoint.sh
     envVars:
+      - key: OPENCLAW_BIND
+        value: lan
       - key: PORT
         value: "8080"
       - key: SETUP_PASSWORD
