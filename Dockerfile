@@ -51,7 +51,7 @@ RUN pnpm ui:build
 
 ENV NODE_ENV=production
 
-# Ensure the entrypoint script is executable (used by Render/cloud deploys).
+# Ensure the entrypoint script is executable.
 RUN chmod +x scripts/docker-entrypoint.sh
 
 # Security hardening: Run as non-root user
@@ -59,11 +59,8 @@ RUN chmod +x scripts/docker-entrypoint.sh
 # This reduces the attack surface by preventing container escape via root privileges
 USER node
 
-# Start gateway server with default config.
-# Binds to loopback (127.0.0.1) by default for security.
-#
-# For container platforms requiring external health checks:
-#   1. Set OPENCLAW_GATEWAY_TOKEN or OPENCLAW_GATEWAY_PASSWORD env var
-#   2. Override CMD: ["node","openclaw.mjs","gateway","--allow-unconfigured","--bind","lan"]
-#   3. Or use scripts/docker-entrypoint.sh which seeds config and binds to LAN
+# The entrypoint seeds a minimal config (e.g. origin fallback for cloud deploys)
+# then exec's the CMD. Override CMD for custom gateway flags:
+#   docker run <image> node openclaw.mjs gateway --allow-unconfigured --bind lan
+ENTRYPOINT ["./scripts/docker-entrypoint.sh"]
 CMD ["node", "openclaw.mjs", "gateway", "--allow-unconfigured"]
